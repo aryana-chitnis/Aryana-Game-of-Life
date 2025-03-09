@@ -24,21 +24,46 @@ public class GameOfLife implements Board {
         }
     }
 
-    // Step the simulation forward one turn.
-    public void step()
-    {
-        print();
-        // Update the game board, store a 1 if the cell is alive and a 0 otherwise.
-    }
-
-
-    public int countNeighbors(int x, int y) {
-        int count = 0;
-        // count the number of neighbors the cell has
-        // use the get(x,y) method to read any board state you need.
-        return count;
-    }
-
+        // Step the simulation forward one turn.
+        public void step() {
+            ArrayList<ArrayList<Integer>> nextState = new ArrayList<>();
+            for (int i = 0; i < grid.size(); i++) {
+                ArrayList<Integer> newRow = new ArrayList<>();
+                for (int j = 0; j < grid.get(0).size(); j++) {
+                    int liveNeighbors = countNeighbors(i, j);
+                    if (grid.get(i).get(j) == 1) {
+                        newRow.add((liveNeighbors == 2 || liveNeighbors == 3) ? 1 : 0);
+                    } else {
+                        newRow.add((liveNeighbors == 3) ? 1 : 0);
+                    }
+                }
+                nextState.add(newRow);
+            }
+            grid = nextState;
+            print();
+        }
+    
+        public int countNeighbors(int row, int col) {
+            int count = 0;
+            for (int dr = -1; dr <= 1; dr++) {
+                for (int dc = -1; dc <= 1; dc++) {
+                    if (dr != 0 || dc != 0) {
+                        count += get(row + dr, col + dc);
+                    }
+                }
+            }
+            return count;
+        }
+    
+        // Set values on the board
+        public void set(int x, int y, int[][] pattern) {
+            for (int i = 0; i < pattern.length; i++) {
+                for (int j = 0; j < pattern[0].length; j++) {
+                    grid.get(i + x).set(j + y, pattern[i][j]);
+                }
+            }
+        }
+    
     // Get a value from the board with "wrap around"
     // Locations outside the board will loop back into the board.
     // Ex: -1 will read board.length-1
